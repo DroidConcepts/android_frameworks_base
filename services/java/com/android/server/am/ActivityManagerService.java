@@ -5879,10 +5879,12 @@ public final class ActivityManagerService extends ActivityManagerNative implemen
                 String[] pkgs = intent.getStringArrayExtra(Intent.EXTRA_PACKAGES);
                 if (pkgs != null) {
                     for (String pkg : pkgs) {
-                        if (forceStopPackageLocked(pkg, -1, false, false, false)) {
-                            setResultCode(Activity.RESULT_OK);
-                            return;
-                        }
+                        synchronized (ActivityManagerService.this) {
+                          if (forceStopPackageLocked(pkg, -1, false, false, false)) {
+                              setResultCode(Activity.RESULT_OK);
+                              return;
+                          }
+                       }
                     }
                 }
             }
@@ -6800,7 +6802,7 @@ public final class ActivityManagerService extends ActivityManagerNative implemen
             if (localLOGV) Slog.v(
                 TAG, "getTasks: max=" + maxNum + ", flags=" + flags
                 + ", receiver=" + receiver);
-
+	    
             if (checkCallingPermission(android.Manifest.permission.GET_TASKS)
                     != PackageManager.PERMISSION_GRANTED) {
                 if (receiver != null) {
@@ -6817,7 +6819,7 @@ public final class ActivityManagerService extends ActivityManagerNative implemen
                         + " requires " + android.Manifest.permission.GET_TASKS;
                 Slog.w(TAG, msg);
                 throw new SecurityException(msg);
-            }
+            } 
 
             int pos = mHistory.size()-1;
             HistoryRecord next =
@@ -6929,8 +6931,6 @@ public final class ActivityManagerService extends ActivityManagerNative implemen
     public List<ActivityManager.RecentTaskInfo> getRecentTasks(int maxNum,
             int flags) {
         synchronized (this) {
-            enforceCallingPermission(android.Manifest.permission.GET_TASKS,
-                    "getRecentTasks()");
 
             IPackageManager pm = ActivityThread.getPackageManager();
             
@@ -9044,7 +9044,28 @@ public final class ActivityManagerService extends ActivityManagerNative implemen
                 sr.crashCount++;
             }
         }
-        
+
+        // If the crashing process is what we consider to be the "home process" and it has been
+        // replaced by a third-party app, clear the package preferred activities from packages
+        // with a home activity running in the process to prevent a repeatedly crashing app
+        // from blocking the user to manually clear the list.
+        if (app == mHomeProcess && mHomeProcess.activities.size() > 0
+                    && (mHomeProcess.info.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
+            Iterator it = mHomeProcess.activities.iterator();
+            while (it.hasNext()) {
+                HistoryRecord r = (HistoryRecord)it.next();
+                if (r.isHomeActivity) {
+                    Log.i(TAG, "Clearing package preferred activities from " + r.packageName);
+                    try {
+                        ActivityThread.getPackageManager()
+                                .clearPackagePreferredActivities(r.packageName);
+                    } catch (RemoteException c) {
+                        // pm is in same process, this will never happen.
+                    }
+                }
+            }
+        }
+
         mProcessCrashTimes.put(app.info.processName, app.info.uid, now);
         return true;
     }
@@ -13814,7 +13835,6 @@ public final class ActivityManagerService extends ActivityManagerNative implemen
         int adj;
         int schedGroup;
         int N;
-// The messaging app
         if ("com.android.mms".equals(app.processName) &&
             Settings.System.getInt(mContext.getContentResolver(),
             Settings.System.LOCK_MMS_IN_MEMORY, 1) == 1 ) {
@@ -13823,7 +13843,7 @@ public final class ActivityManagerService extends ActivityManagerNative implemen
             adj = FOREGROUND_APP_ADJ;
             schedGroup = Process.THREAD_GROUP_DEFAULT;
             app.adjType = "mms";
-        if (app == TOP_APP) {
+        } else if (app == TOP_APP) {
             // The last app on the list is the foreground app.
             adj = FOREGROUND_APP_ADJ;
             schedGroup = Process.THREAD_GROUP_DEFAULT;
@@ -13863,12 +13883,10 @@ public final class ActivityManagerService extends ActivityManagerNative implemen
             app.adjType = "force-foreground";
             app.adjSource = app.forcingToForeground;
         } else if (app == mHomeProcess) {
-            
-// This process is hosting what we currently consider to be the
-// home app, so we don't want to let it go into the background.
+            // This process is hosting what we currently consider to be the
+            // home app, so we don't want to let it go into the background.
             adj =  Settings.System.getInt(mContext.getContentResolver(),
-                   Settings.System.LOCK_HOME_IN_MEMORY, 0) == 1 ? VISIBLE_APP_ADJ : HOME_APP_ADJ;
-
+                    Settings.System.LOCK_HOME_IN_MEMORY, 0) == 1 ? VISIBLE_APP_ADJ : HOME_APP_ADJ;
             schedGroup = Process.THREAD_GROUP_BG_NONINTERACTIVE;
             app.adjType = "home";
         } else if ((N=app.activities.size()) != 0) {
