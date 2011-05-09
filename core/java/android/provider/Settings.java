@@ -1679,6 +1679,12 @@ public final class Settings {
         public static final String UNLOCK_SOUND = "unlock_sound";
 
         /**
+         * Whether to keep the home app 'locked'
+         * @hide
+         */
+        public static final String LOCK_HOME_IN_MEMORY = "lock_home_in_memory";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          * @hide
@@ -2240,14 +2246,7 @@ public final class Settings {
          * Whether or not to show ADB Debugging notification
          * @hide
          */
-       public static final String ADB_NOTIFY = "adb_notify";
-
-	/**
-         * Whether Compcache is eanbled.
-	 * @hide
-         */
-        public static final String COMPCACHE_ENABLED = "compcache_enabled";
-        
+       public static final String ADB_NOTIFY = "adb_notify";  
 
         /**
          * Setting to allow mock locations and location provider status to be injected into the
