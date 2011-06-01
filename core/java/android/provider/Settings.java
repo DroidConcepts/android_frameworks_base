@@ -1825,6 +1825,30 @@ public final class Settings {
         public static final String LOCK_MMS_IN_MEMORY = "lock_mms_in_memory";
 
         /**
+         * Color mask tp apply to notification bar when custom is set
+         * @hide
+         */
+        public static final String NOTIF_BAR_COLOR = "notif_bar_color";
+
+        /**
+         * Whether to use custom notification bar
+         * @hide
+         */
+        public static final String NOTIF_BAR_CUSTOM = "notif_bar_custom";
+
+        /**
+         * Whether to use a custom pull-down notification screen
+         * @hide 
+         */
+        public static final String NOTIF_EXPANDED_BAR_COLOR = "notif_expanded_bar_color";
+        
+        /**
+         * Color mask to apply to pull-down notification screen
+         * @hide
+         */
+        public static final String NOTIF_EXPANDED_BAR_CUSTOM = "notif_expanded_bar_custom";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          * @hide
@@ -1884,7 +1908,11 @@ public final class Settings {
             DOCK_SOUNDS_ENABLED,
             LOCKSCREEN_SOUNDS_ENABLED,
             SHOW_WEB_SUGGESTIONS,
-            NOTIFICATION_LIGHT_PULSE
+            NOTIFICATION_LIGHT_PULSE,
+            NOTIF_BAR_COLOR,
+            NOTIF_BAR_CUSTOM,
+            NOTIF_EXPANDED_BAR_COLOR,
+            NOTIF_EXPANDED_BAR_CUSTOM
         };
 
         // Settings moved to Settings.Secure

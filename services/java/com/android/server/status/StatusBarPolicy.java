@@ -415,7 +415,7 @@ public class StatusBarPolicy {
 
         // clock
         mCalendar = Calendar.getInstance(TimeZone.getDefault());
-        mClockData = IconData.makeText("clock", "");
+        mClockData = IconData.makeText("clock", "", Settings.System.CLOCK_COLOR, Settings.System.SHOW_STATUS_CLOCK, true);
         mClockIcon = service.addIcon(mClockData, null);
         updateClock();
 
@@ -426,7 +426,8 @@ public class StatusBarPolicy {
 
         // battery
         mBatteryData = IconData.makeIconNumber("battery",
-                null, com.android.internal.R.drawable.stat_sys_battery_unknown, 0, 0);
+                null, com.android.internal.R.drawable.stat_sys_battery_unknown, 0, 0,
+                Settings.System.BATTERY_PERCENTAGE_STATUS_COLOR);
         mBatteryIcon = service.addIcon(mBatteryData, null);
 
         // phone_signal
