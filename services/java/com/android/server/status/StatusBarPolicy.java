@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.TypedArray;
+import android.database.ContentObserver;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
@@ -419,6 +420,23 @@ public class StatusBarPolicy {
         mClockIcon = service.addIcon(mClockData, null);
         updateClock();
 
+        ContentObserver coClock = new ContentObserver(null) {
+            @Override
+             public void onChange(boolean selfChange) {
+                updateClock();
+            }
+        };
+
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.CLOCK_COLOR),
+                false,
+                coClock);
+
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.SHOW_STATUS_CLOCK),
+                false,
+                coClock);
+
         // storage
         mStorageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
         mStorageManager.registerListener(
@@ -429,6 +447,23 @@ public class StatusBarPolicy {
                 null, com.android.internal.R.drawable.stat_sys_battery_unknown, 0, 0,
                 Settings.System.BATTERY_PERCENTAGE_STATUS_COLOR);
         mBatteryIcon = service.addIcon(mBatteryData, null);
+
+        ContentObserver coBattery = new ContentObserver(null) {
+            @Override
+            public void onChange(boolean selfChange) {
+                updateBattery(null);
+            }
+        };
+
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.BATTERY_PERCENTAGE_STATUS_COLOR),
+                false,
+                coBattery);
+
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.BATTERY_PERCENTAGE_STATUS_ICON),
+                false,
+                coBattery);
 
         // phone_signal
         mPhone = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
@@ -647,11 +682,19 @@ public class StatusBarPolicy {
     }
 
     private final void updateBattery(Intent intent) {
-        mBatteryData.iconId = intent.getIntExtra("icon-small", 0);
-        mBatteryData.iconLevel = intent.getIntExtra("level", 0);
+                boolean plugged;
+        int level;
 
-        boolean plugged = intent.getIntExtra("plugged", 0) != 0;
-        int level = intent.getIntExtra("level", -1);
+        if(intent != null) {
+            mBatteryData.iconId = intent.getIntExtra("icon-small", 0);
+            mBatteryData.iconLevel = intent.getIntExtra("level", 0);
+
+                    plugged = intent.getIntExtra("plugged", 0) != 0;
+            level = intent.getIntExtra("level", -1);
+        } else {
+            plugged = mBatteryPlugged;
+            level = mBatteryLevel;
+        }
 
         //show battery percentage if not plugged in and status is enabled
         if (plugged || level >= 100 ||
