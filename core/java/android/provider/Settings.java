@@ -27,6 +27,7 @@ import android.content.ContentQueryMap;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.IContentProvider;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -59,6 +60,15 @@ import java.util.Map;
 public final class Settings {
 
     // Intent actions for Settings
+
+    /** 
+     * @hide
+     */
+    public static final String SETTINGS_CHANGED = "android.settings.SETTINGS_CHANGED_ACTION";
+
+    public Settings() {
+        /* Empty for API conflicts */
+    }
 
     /**
      * Activity Action: Show system settings.
@@ -1283,6 +1293,22 @@ public final class Settings {
         public static final String ALWAYS_FINISH_ACTIVITIES =
                 "always_finish_activities";
 
+        /**
+         * Whether custom light sensor levels & values are enabled. The value is
+         * boolean (1 or 0).
+         *
+         * @hide
+         */
+        public static final String LIGHT_SENSOR_CUSTOM = "light_sensor_custom";
+
+        /**
+         * Screen dim value to use if LIGHT_SENSOR_CUSTOM is set. The value is int.
+         * Default is android.os.BRIGHTNESS_DIM.
+         *
+         * @hide
+         */
+        public static final String LIGHT_SCREEN_DIM = "light_screen_dim";
+
 
         /**
          * Ringer mode. This is used internally, changing this value will not
@@ -1847,6 +1873,36 @@ public final class Settings {
          * @hide
          */
         public static final String NOTIF_EXPANDED_BAR_CUSTOM = "notif_expanded_bar_custom";
+
+        /**
+         * Use the Notification Power Widget? (Who wouldn't!)
+         * @hide
+         */
+        public static final String EXPANDED_VIEW_WIDGET = "expanded_view_widget";
+
+        /**
+         * Notification Indicator Color
+         * @hide
+         */
+        public static final String EXPANDED_VIEW_WIDGET_COLOR = "expanded_widget_color";
+
+        /**
+         * Widget Buttons to Use
+         * @hide
+         */
+        public static final String WIDGET_BUTTONS = "expanded_widget_buttons";
+
+        /** @hide */
+        public static final String EXPANDED_BRIGHTNESS_MODE = "expanded_brightness_mode";
+
+        /** @hide */
+        public static final String EXPANDED_NETWORK_MODE = "expanded_network_mode";
+
+        /** @hide */
+        public static final String EXPANDED_SCREENTIMEOUT_MODE = "expanded_screentimeout_mode";
+
+        /** @hide */
+        public static final String EXPANDED_RING_MODE = "expanded_ring_mode";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -3588,12 +3644,13 @@ public final class Settings {
 
         /**
          * Thread-safe method for enabling or disabling a single location provider.
-         * @param cr the content resolver to use
+         * @param cr the content resolver from the calling application
          * @param provider the location provider to enable or disable
          * @param enabled true if the provider should be enabled
          */
         public static final void setLocationProviderEnabled(ContentResolver cr,
                 String provider, boolean enabled) {
+            Context context = cr.getContext();
             // to ensure thread safety, we write the provider name with a '+' or '-'
             // and let the SettingsProvider handle it rather than reading and modifying
             // the list of enabled providers.
@@ -3603,6 +3660,16 @@ public final class Settings {
                 provider = "-" + provider;
             }
             putString(cr, Settings.Secure.LOCATION_PROVIDERS_ALLOWED, provider);
+            try {
+                Intent i = new Intent();
+                i.setAction(Settings.SETTINGS_CHANGED);
+                i.putExtra("SETTING", "GPS");
+                i.putExtra("GPS_STATUS_CHANGE", enabled);
+                context.sendBroadcast(i);
+            } catch(Exception e) {
+                //This is ignored, as this try-catch is just incase this is called
+                //Before the system is read.
+            }
         }
     }
 
