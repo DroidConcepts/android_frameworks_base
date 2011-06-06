@@ -287,6 +287,8 @@ public class StatusBarService extends IStatusBar.Stub
     ArrayList<DisableRecord> mDisableRecords = new ArrayList<DisableRecord>();
     int mDisabled = 0;
 
+    private boolean mHideOnPowerButtonChange = false;
+
     /**
      * Construct the service, add the status bar view to the window manager
      */
@@ -1909,6 +1911,9 @@ public class StatusBarService extends IStatusBar.Stub
         public void onClick(View v) {
             LinearLayout layout = (LinearLayout)v;
             String type = (String)layout.getTag();
+            if(mHideOnPowerButtonChange) {
+                deactivate();
+            }
             if(PowerButton.TOGGLE_WIFI.equals(type)) {
                 WifiButton.getInstance().toggleState(mContext);
             } else if(PowerButton.TOGGLE_GPS.equals(type)) {
@@ -1965,6 +1970,8 @@ public class StatusBarService extends IStatusBar.Stub
             setupWidget(buttonType, posi + 1);
         }
         updateWidget();
+        mHideOnPowerButtonChange = (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.EXPANDED_HIDE_ONCHANGE, 0) == 1);
     }
 
     private void setupWidget(String buttonType, int position) {
@@ -2330,6 +2337,10 @@ public class StatusBarService extends IStatusBar.Stub
                          false, this);
 
             resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.EXPANDED_HIDE_ONCHANGE),
+                         false, this);
+
+            resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE),
                          false, this);
 
@@ -2379,6 +2390,11 @@ public class StatusBarService extends IStatusBar.Stub
                 }
             } else if(uri.equals(Settings.System.getUriFor(Settings.System.WIDGET_BUTTONS))) {
                 setupPowerWidget();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.EXPANDED_HIDE_ONCHANGE))) {
+                setupPowerWidget();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.EXPANDED_VIEW_WIDGET))) {
             }
 
             boolean powerWidget = Settings.System.getInt(mContext.getContentResolver(),
