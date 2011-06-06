@@ -98,6 +98,8 @@ import com.android.server.status.widget.NetworkModeButton;
 import com.android.server.status.widget.LockScreenButton;
 import com.android.server.status.widget.AutoRotateButton;
 import com.android.server.status.widget.AirplaneButton;
+import com.android.server.status.widget.FlashlightButton;
+import com.android.server.status.widget.SleepButton;
 
 
 /**
@@ -1933,6 +1935,10 @@ public class StatusBarService extends IStatusBar.Stub
                 AutoRotateButton.getInstance().toggleState(mContext);
             } else if(PowerButton.TOGGLE_AIRPLANE.equals(type)) {
                 AirplaneButton.getInstance().toggleState(mContext);
+            } else if(PowerButton.TOGGLE_FLASHLIGHT.equals(type)) {
+                FlashlightButton.getInstance().toggleState(mContext);
+            } else if(PowerButton.TOGGLE_SLEEPMODE.equals(type)) {
+                SleepButton.getInstance().toggleState(mContext);
             }
             updateWidget();
         }
@@ -1989,6 +1995,10 @@ public class StatusBarService extends IStatusBar.Stub
             AutoRotateButton.getInstance().setupButton(position);
         } else if(PowerButton.TOGGLE_AIRPLANE.equals(buttonType)) {
             AirplaneButton.getInstance().setupButton(position);
+        } else if(PowerButton.TOGGLE_FLASHLIGHT.equals(buttonType)) {
+            FlashlightButton.getInstance().setupButton(position);
+        } else if(PowerButton.TOGGLE_SLEEPMODE.equals(buttonType)) {
+            SleepButton.getInstance().setupButton(position);
         }
 
     }
@@ -2012,6 +2022,8 @@ public class StatusBarService extends IStatusBar.Stub
         NetworkModeButton.getInstance().setupButton(0);
         AutoRotateButton.getInstance().setupButton(0);
         AirplaneButton.getInstance().setupButton(0);
+        FlashlightButton.getInstance().setupButton(0);
+        SleepButton.getInstance().setupButton(0);
     }
 
     private void updateStates() {
@@ -2028,7 +2040,10 @@ public class StatusBarService extends IStatusBar.Stub
         NetworkModeButton.getInstance().updateState(mContext);
         AutoRotateButton.getInstance().updateState(mContext);
         AirplaneButton.getInstance().updateState(mContext);
+        FlashlightButton.getInstance().updateState(mContext);
+        SleepButton.getInstance().updateState(mContext);
     }
+
     private void updateViews() {
         GPSButton.getInstance().updateView(mContext, mExpandedView);
         WifiButton.getInstance().updateView(mContext, mExpandedView);
@@ -2043,6 +2058,8 @@ public class StatusBarService extends IStatusBar.Stub
         NetworkModeButton.getInstance().updateView(mContext, mExpandedView);
         AutoRotateButton.getInstance().updateView(mContext, mExpandedView);
         AirplaneButton.getInstance().updateView(mContext, mExpandedView);
+        FlashlightButton.getInstance().updateView(mContext, mExpandedView);
+        SleepButton.getInstance().updateView(mContext, mExpandedView);
     }
 
     private void updateWidget() {
