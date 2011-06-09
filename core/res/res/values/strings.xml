@@ -2285,4 +2285,9 @@
     <!-- Shown when the users bandwidth is reduced because of excessive data use -->
     <string name="throttled_notification_title">Mobile data limit exceeded</string>
     <string name="throttled_notification_message">Touch to learn more about mobile data use</string>
+
+<!-- Droid Concepts Added Strings -->
+    <!--Application killed toast -->
+    <string name="app_killed_message">Application killed</string>
+
 </resources>
