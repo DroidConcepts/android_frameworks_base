@@ -1914,13 +1914,6 @@ public final class Settings {
         public static final String EXPANDED_FLASH_MODE = "expanded_flash_mode";
 
         /**
-         * Whether to allow killing of the foreground process by long-pressing
-         * the device's BACK button.
-         * @hide
-         */
-        public static final String KILL_APP_LONGPRESS_BACK = "kill_app_on_longpress_back";
-
-        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          * @hide
@@ -1995,6 +1988,7 @@ public final class Settings {
          */
         @Deprecated
         public static final String ADB_ENABLED = Secure.ADB_ENABLED;
+
 
         /**
          * @deprecated Use {@link android.provider.Settings.Secure#ANDROID_ID} instead
@@ -2487,6 +2481,13 @@ public final class Settings {
          * @hide
          */
        public static final String ADB_NOTIFY = "adb_notify";  
+
+        /**
+         * Whether to allow killing of the foreground process by long-pressing
+         * the device's BACK button.
+         * @hide
+         */
+        public static final String KILL_APP_LONGPRESS_BACK = "kill_app_on_longpress_back";
 
         /**
          * Setting to allow mock locations and location provider status to be injected into the
