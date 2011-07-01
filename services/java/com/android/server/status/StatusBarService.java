@@ -1949,6 +1949,7 @@ public class StatusBarService extends IStatusBar.Stub
 
     private void setupWidget(String buttonType, int position) {
 
+        PowerButton btn = null;
         if(PowerButton.TOGGLE_WIFI.equals(buttonType)) {
             btn = WifiButton.getInstance();
         } else if(PowerButton.TOGGLE_GPS.equals(buttonType)) {
@@ -1985,7 +1986,7 @@ public class StatusBarService extends IStatusBar.Stub
                 btn.setupButton(position);
                 mUsedPowerButtons.put(buttonType, btn);
             }
-
+        }
     }
 
     private void clearWidget() {
