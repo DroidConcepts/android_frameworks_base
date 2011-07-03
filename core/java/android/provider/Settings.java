@@ -1973,11 +1973,7 @@ public final class Settings {
             DOCK_SOUNDS_ENABLED,
             LOCKSCREEN_SOUNDS_ENABLED,
             SHOW_WEB_SUGGESTIONS,
-            NOTIFICATION_LIGHT_PULSE,
-            NOTIF_BAR_COLOR,
-            NOTIF_BAR_CUSTOM,
-            NOTIF_EXPANDED_BAR_COLOR,
-            NOTIF_EXPANDED_BAR_CUSTOM
+            NOTIFICATION_LIGHT_PULSE
         };
 
         // Settings moved to Settings.Secure
