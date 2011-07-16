@@ -443,6 +443,15 @@ public class StatusBarService extends IStatusBar.Stub
         lp.setTitle("StatusBar");
         lp.windowAnimations = R.style.Animation_StatusBar;
 
+        //Check and see if power widget should be set on start.
+        boolean powerWidget = Settings.System.getInt(mContext.getContentResolver(),
+                            Settings.System.EXPANDED_VIEW_WIDGET, 1) == 1;
+         setupPowerWidget();
+        if(!powerWidget) {
+            mExpandedView.findViewById(R.id.exp_power_stat).
+                        setVisibility(View.GONE);
+        }
+
         WindowManagerImpl.getDefault().addView(view, lp);
 
         mWifiManager = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
