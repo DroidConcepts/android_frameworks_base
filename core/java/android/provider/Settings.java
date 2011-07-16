@@ -2479,13 +2479,6 @@ public final class Settings {
        public static final String ADB_NOTIFY = "adb_notify";  
 
         /**
-         * Whether to allow killing of the foreground process by long-pressing
-         * the device's BACK button.
-         * @hide
-         */
-        public static final String KILL_APP_LONGPRESS_BACK = "kill_app_on_longpress_back";
-
-        /**
          * Setting to allow mock locations and location provider status to be injected into the
          * LocationManager service for testing purposes during application development.  These
          * locations and status values  override actual location and status information generated
@@ -3606,6 +3599,13 @@ public final class Settings {
          */
         public static final String THROTTLE_MAX_NTP_CACHE_AGE_SEC =
                 "throttle_max_ntp_cache_age_sec";
+
+        /**
+         * Whether to allow killing of the foreground process by long-pressing
+         * the device's BACK button.
+         * @hide
+         */
+        public static final String KILL_APP_LONGPRESS_BACK = "kill_app_on_longpress_back";
 
 
         /**
