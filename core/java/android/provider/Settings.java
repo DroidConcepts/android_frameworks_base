@@ -1692,6 +1692,17 @@ public final class Settings {
          */
         public static final String BATTERY_PERCENTAGE_STATUS_COLOR = "battery_status_color_title";
         
+         /**
+         * How many ms to delay before enabling the screen lock when the screen goes off due to timeout
+         * @hide
+         */
+        public static final String SCREEN_LOCK_TIMEOUT_DELAY = "screen_lock_timeout_delay";
+        
+        /**
+         * How many ms to delay before enabling the screen lock when the screen is turned off by the user
+         * @hide
+         */
+        public static final String SCREEN_LOCK_SCREENOFF_DELAY = "screen_lock_screenoff_delay";
 
         /**
          * Whether the audible DTMF tones are played by the dialer when dialing. The value is
